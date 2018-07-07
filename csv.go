@@ -13,6 +13,9 @@ import (
 	"github.com/ingmardrewing/fs"
 )
 
+// Read cs from file with filename within filepath
+// only actualy comma separated (,) files will
+// be read correctly
 func ReadCsv(filePath, fileName string) ([][]string, error) {
 	completePath := path.Join(filePath, fileName)
 	f, err := os.Open(completePath)
@@ -33,7 +36,11 @@ func ReadCsv(filePath, fileName string) ([][]string, error) {
 	return lines, nil
 }
 
-func WriteCsv(filepath, filename string, records [][]string) error {
+// Writes the data given as slice of string slices
+// to the file with filename within filepath
+// strips inch signs from the conten in order to wrap the field
+// contents with inch signs
+func WriteCsv(filepath, filename string, data [][]string) error {
 	txt := ""
 	if ok, err := fs.PathExists(filepath); !ok {
 		if err != nil {
@@ -41,7 +48,7 @@ func WriteCsv(filepath, filename string, records [][]string) error {
 		}
 		return errors.New("Path doesn't exist: " + filepath)
 	}
-	for _, record := range records {
+	for _, record := range data {
 		line := ""
 		for _, field := range record {
 			line = line + wrapContent(field) + ","
